@@ -8,12 +8,44 @@
     {
       "src": "web/**",
       "use": "@vercel/static"
+    },
+    {
+      "src": "assets/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "template.md",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
       "dest": "server.js"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/template.md",
+      "dest": "/template.md"
+    },
+    {
+      "src": "/styles/(.*)",
+      "dest": "/web/styles/$1"
+    },
+    {
+      "src": "/scripts/(.*)",
+      "dest": "/web/scripts/$1"
+    },
+    {
+      "src": "/image/(.*)",
+      "dest": "/web/image/$1"
+    },
+    {
+      "src": "/sw.js",
+      "dest": "/web/sw.js"
     },
     {
       "src": "/(.*)",

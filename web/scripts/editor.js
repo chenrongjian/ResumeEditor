@@ -27,23 +27,12 @@ class EditorManager {
                 return Promise.reject('Monaco Editor 未加载');
             }
 
-            // 加载模板内容
-            try {
-                await this.loadTemplateContent();
-                if (!this.templateLoaded) {
-                    throw new Error('模板加载失败');
-                }
-            } catch (error) {
-                console.error('无法加载模板:', error);
-                return Promise.reject('无法加载模板');
-            }
-
             // 获取当前主题
             const currentTheme = window.themeManager ? window.themeManager.getTheme() : 'light';
             
             // 创建编辑器实例
             this.editor = monaco.editor.create(this.container, {
-                value: this.content,
+                value: '', // 先设置为空字符串
                 language: 'markdown',
                 theme: currentTheme === 'dark' ? 'vs-dark' : 'vs',
                 fontSize: 14,
@@ -73,6 +62,17 @@ class EditorManager {
                     horizontalScrollbarSize: 0
                 }
             });
+
+            // 编辑器创建后再加载模板内容
+            try {
+                await this.loadTemplateContent();
+            } catch (error) {
+                console.error('无法加载模板:', error);
+                // 加载失败时设置默认内容
+                if (this.editor) {
+                    this.editor.setValue(this.getDefaultContent());
+                }
+            }
 
             // 监听内容变化
             this.editor.onDidChangeModelContent(() => {
@@ -241,11 +241,23 @@ class EditorManager {
             }
             const content = await response.text();
             console.log('模板文件加载成功，长度:', content.length);
-            this.editor.setValue(content);
-            console.log('模板内容已设置到编辑器');
+            
+            // 确保编辑器实例存在
+            if (this.editor) {
+                this.editor.setValue(content);
+                console.log('模板内容已设置到编辑器');
+                this.templateLoaded = true;
+            } else {
+                console.error('编辑器实例不存在，无法设置内容');
+                this.content = content; // 保存内容以备后用
+            }
         } catch (error) {
             console.error('加载模板文件失败:', error);
-            this.editor.setValue('# 简历模板\n\n## 基本信息\n\n- 姓名：\n- 年龄：\n- 学历：\n- 专业：\n- 联系方式：\n\n## 教育经历\n\n## 工作经历\n\n## 项目经验\n\n## 技能特长\n\n## 个人评价');
+            // 确保编辑器实例存在
+            if (this.editor) {
+                this.editor.setValue(this.getDefaultContent());
+            }
+            throw error;
         }
     }
 

@@ -25,6 +25,8 @@ app.use(express.static(path.join(__dirname, 'web')))
 app.use('/web', express.static(path.join(__dirname, 'web')))
 app.use('/assets', express.static(path.join(__dirname, 'assets')))
 app.use('/image', express.static(path.join(__dirname, 'web/image')))
+app.use('/styles', express.static(path.join(__dirname, 'web/styles')))
+app.use('/scripts', express.static(path.join(__dirname, 'web/scripts')))
 
 // 处理template.md路由
 app.get('/api/template', (req, res) => {
@@ -33,7 +35,8 @@ app.get('/api/template', (req, res) => {
     // 检查文件是否存在
     if (!fs.existsSync(templatePath)) {
         console.error('template.md 文件不存在:', templatePath);
-        return res.status(404).send('Template file not found');
+        // 返回默认模板内容
+        return res.status(200).send(`# 简历模板\n\n## 基本信息\n\n- 姓名：\n- 年龄：\n- 学历：\n- 专业：\n- 联系方式：\n\n## 教育经历\n\n## 工作经历\n\n## 项目经验\n\n## 技能特长\n\n## 个人评价`);
     }
 
     try {
@@ -41,7 +44,8 @@ app.get('/api/template', (req, res) => {
         const content = fs.readFileSync(templatePath, 'utf8');
         if (!content || content.trim() === '') {
             console.error('template.md 文件内容为空');
-            return res.status(500).send('Template file is empty');
+            // 返回默认模板内容
+            return res.status(200).send(`# 简历模板\n\n## 基本信息\n\n- 姓名：\n- 年龄：\n- 学历：\n- 专业：\n- 联系方式：\n\n## 教育经历\n\n## 工作经历\n\n## 项目经验\n\n## 技能特长\n\n## 个人评价`);
         }
 
         // 设置响应头
@@ -54,17 +58,37 @@ app.get('/api/template', (req, res) => {
         res.send(content);
     } catch (error) {
         console.error('读取template.md文件失败:', error);
-        res.status(500).send('Error reading template file');
+        // 返回默认模板内容
+        return res.status(200).send(`# 简历模板\n\n## 基本信息\n\n- 姓名：\n- 年龄：\n- 学历：\n- 专业：\n- 联系方式：\n\n## 教育经历\n\n## 工作经历\n\n## 项目经验\n\n## 技能特长\n\n## 个人评价`);
     }
 })
 
 // 处理默认头像
 app.get('/api/avatar', (req, res) => {
     const defaultAvatar = path.join(__dirname, 'assets/favicon.ico')
+    if (!fs.existsSync(defaultAvatar)) {
+        return res.status(404).send('Avatar not found');
+    }
+    
     if (!res.headersSent) {
         res.sendFile(defaultAvatar)
     }
 })
+
+// 处理静态资源
+app.get('/assets/:filename', (req, res) => {
+    const filePath = path.join(__dirname, 'assets', req.params.filename);
+    if (fs.existsSync(filePath)) {
+        res.sendFile(filePath);
+    } else {
+        res.status(404).send('File not found');
+    }
+});
+
+// 健康检查端点
+app.get('/api/health', (req, res) => {
+    res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
 // 所有其他路由返回index.html
 app.get('*', (req, res) => {
