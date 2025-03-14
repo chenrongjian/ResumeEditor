@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- 清除缓存脚本 - 在页面加载前执行 -->
+    <script>
+        // 强制清除所有缓存
+        (function() {
+            console.log('页面开始加载，清除所有缓存...');
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // 防止缓存
+            if (window.location.search.indexOf('nocache') === -1) {
+                var url = window.location.href;
+                url += (url.indexOf('?') === -1 ? '?' : '&') + 'nocache=' + new Date().getTime();
+                window.location.href = url;
+            }
+        })();
+    </script>
+    
+    <!-- SEO相关 -->
+    <title>在线简历编辑器 - 优雅的Markdown简历制作工具</title>
+    <meta name="description" content="一款优雅的在线Markdown简历编辑器，支持实时预览、一键导出PDF、自动保存等功能。让简历制作变得简单而专业。">
+    <meta name="keywords" content="简历编辑器,Markdown简历,在线简历制作,PDF导出,简历模板">
+    <meta name="author" content="在线简历编辑器">
+    <meta name="robots" content="index,follow">
+    <meta property="og:title" content="在线简历编辑器 - 优雅的Markdown简历制作工具">
+    <meta property="og:description" content="一款优雅的在线Markdown简历编辑器，支持实时预览、一键导出PDF、自动保存等功能。让简历制作变得简单而专业。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://your-domain.com">
+    <meta property="og:image" content="/assets/android-chrome-512x512.png">
+    
+    <!-- 图标相关 -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="manifest" href="/assets/site.webmanifest">
+    <meta name="theme-color" content="#4870ac">
+    
+    <!-- 样式文件 -->
+    <link rel="stylesheet" href="/styles/main.css">
+    <link rel="stylesheet" href="/styles/preview.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/editor/editor.main.css">
+    <!-- 引入字体图标 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header class="header">
+            <div class="header-title">
+                <i class="fas fa-file-alt"></i>
+                在线简历编辑器
+            </div>
+            <div class="header-actions">
+                <button class="btn" id="toggleTheme" title="切换主题">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="btn btn-primary" id="exportPDF">
+                    <i class="fas fa-file-pdf"></i>
+                    导出PDF
+                </button>
+            </div>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="main-content">
+            <!-- 编辑器区域 -->
+            <section class="editor-section">
+                <div class="monaco-editor-container" id="editor"></div>
+            </section>
+
+            <!-- 预览区域 -->
+            <section class="preview-section">
+                <div class="preview-container" id="preview">
+                    <div class="preview-content"></div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 加载提示 -->
+        <div class="loading-overlay" id="loading">
+            <div class="loading-content">
+                <div class="loading-spinner"></div>
+                <div class="loading-text">正在初始化编辑器...</div>
+            </div>
+        </div>
+
+        <!-- 保存提示 -->
+        <div class="save-notification" id="saveNotification" style="display: none;">
+            <i class="fas fa-check"></i>
+            已自动保存
+        </div>
+    </div>
+
+    <!-- 依赖脚本 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.2.12/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
+
+    <!-- 应用脚本 -->
+    <script src="/scripts/theme.js"></script>
+    <script src="/scripts/editor.js"></script>
+    <script src="/scripts/preview.js"></script>
+    <script src="/scripts/export.js"></script>
+
+    <!-- Monaco Editor 配置 -->
+    <script>
+        // 强制清除所有缓存
+        console.log('Monaco Editor 配置前，再次清除缓存...');
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        // 显示加载提示
+        document.getElementById('loading').style.display = 'flex';
+        
+        // 配置 Monaco Editor 加载器
+        var require = { paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' } };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+    
+    <!-- 初始化脚本 -->
+    <script>
+        // 等待页面加载完成
+        window.addEventListener('load', function() {
+            // 加载Monaco编辑器
+            require(['vs/editor/editor.main'], function() {
+                console.log('Monaco Editor 加载完成');
+                
+                // 初始化应用
+                initializeApp();
+            });
+        });
+        
+        // 应用初始化函数
+        async function initializeApp() {
+            try {
+                console.log('开始初始化应用...');
+                
+                // 再次清除缓存
+                console.log('初始化应用前，再次清除缓存...');
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // 创建管理器实例
+                window.themeManager = new ThemeManager();
+                window.themeManager.init();
+                
+                window.editorManager = new EditorManager();
+                window.previewManager = new PreviewManager();
+                
+                window.exportManager = new ExportManager();
+                
+                // 初始化编辑器
+                await window.editorManager.init();
+                console.log('编辑器初始化完成');
+                
+                // 初始化预览
+                await window.previewManager.init();
+                console.log('预览初始化完成');
+                
+                // 更新预览内容
+                const content = window.editorManager.editor.getValue();
+                window.previewManager.updatePreview(content);
+                console.log('初始预览内容已更新');
+                
+                // 隐藏加载提示
+                document.getElementById('loading').style.display = 'none';
+                
+                // 延迟检查编辑器状态，确保可编辑
+                setTimeout(() => {
+                    if (window.editorManager && window.editorManager.editor) {
+                        console.log('延迟检查编辑器状态...');
+                        window.editorManager.ensureEditorEditable();
+                        
+                        // 尝试触发焦点事件，确保编辑器可交互
+                        window.editorManager.editor.focus();
+                    }
+                }, 1000);
+                
+            } catch (error) {
+                console.error('应用初始化失败:', error);
+                const loading = document.getElementById('loading');
+                loading.querySelector('.loading-text').textContent = '初始化失败，请刷新页面重试';
+                loading.style.display = 'flex';
+            }
+        }
+    </script>
+
+    <!-- Service Worker 注册 -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('Service Worker 注册成功:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker 注册失败:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html> 

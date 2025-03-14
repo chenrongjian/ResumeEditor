@@ -1,0 +1,46 @@
+{
+  "name": "lapis-cv",
+  "productName": "Markdown简历编辑器",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev-mode",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "web": "node server.js",
+    "web-dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "electron": "^28.2.0",
+    "express": "^4.21.2",
+    "marked": "^11.2.0",
+    "monaco-editor": "^0.45.0",
+    "puppeteer": "^24.4.0",
+    "showdown": "^2.1.0"
+  },
+  "devDependencies": {
+    "electron-builder": "^24.9.1",
+    "nodemon": "^3.0.3"
+  },
+  "build": {
+    "appId": "com.lapis.cv",
+    "productName": "Markdown简历编辑器",
+    "win": {
+      "target": "nsis",
+      "icon": "assets/favicon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/apple-touch-icon.png"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "assets/android-chrome-512x512.png"
+    },
+    "extraResources": [
+      "lapis-cv/**/*",
+      "template.md"
+    ]
+  }
+}

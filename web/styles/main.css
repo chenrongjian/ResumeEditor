@@ -1,0 +1,351 @@
+/* 网页版简历编辑器样式 */
+
+:root {
+  /* 颜色变量 */
+  --primary-color: #4870ac;
+  --secondary-color: #6a9be6;
+  --text-color: #2c3e50;
+  --border-color: #e0e6ed;
+  --bg-color: #ffffff;
+  --editor-bg: #f8f9fa;
+  --preview-bg: #ffffff;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --success-color: #42b983;
+  --error-color: #e74c3c;
+  
+  /* 字体变量 */
+  --font-sans: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  
+  /* 尺寸变量 */
+  --header-height: 60px;
+}
+
+/* 暗色主题 */
+[data-theme="dark"] {
+  --primary-color: #6a9be6;
+  --secondary-color: #4870ac;
+  --text-color: #e0e6ed;
+  --border-color: #2c3e50;
+  --bg-color: #1a1f25;
+  --editor-bg: #1e242c;
+  --preview-bg: #1a1f25;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+}
+
+/* 全局样式重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--text-color);
+  background-color: var(--bg-color);
+  line-height: 1.6;
+  overflow: hidden;
+}
+
+/* 布局容器 */
+.app-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 顶部导航栏 */
+.header {
+  height: var(--header-height);
+  background-color: var(--bg-color);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  position: relative;
+  z-index: 100;
+}
+
+.header-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 12px;
+}
+
+/* 主要内容区域 */
+.main-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  padding: 20px;
+  gap: 20px;
+  background-color: var(--bg-color);
+}
+
+/* 编辑器区域 */
+.editor-section {
+  flex: 1;
+  background: var(--editor-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 12px var(--shadow-color);
+  overflow: hidden;
+}
+
+/* 预览区域 */
+.preview-section {
+  flex: 1;
+  background: var(--preview-bg);
+  border-radius: 8px;
+  box-shadow: 0 2px 12px var(--shadow-color);
+  overflow: hidden;
+}
+
+/* 按钮样式 */
+.btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: var(--text-color);
+}
+
+.btn:hover {
+  background: var(--border-color);
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--secondary-color);
+}
+
+/* 编辑器容器 */
+.monaco-editor-container {
+  height: calc(100vh - var(--header-height) - 40px);
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.monaco-editor {
+  pointer-events: auto;
+  width: 100% !important;
+}
+
+/* 确保编辑器内容不溢出 */
+.monaco-editor .overflow-guard {
+  pointer-events: auto;
+  width: 100% !important;
+}
+
+.monaco-editor .monaco-scrollable-element {
+  pointer-events: auto !important;
+  width: 100% !important;
+}
+
+/* 确保编辑区域自适应宽度 */
+.monaco-editor .editor-container {
+  width: 100% !important;
+}
+
+/* 强制所有行内容换行 */
+.monaco-editor .view-lines {
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+}
+
+/* 确保光标位置正确 */
+.monaco-editor .cursor {
+  white-space: pre-wrap !important;
+}
+
+/* 自定义滚动条样式 */
+.monaco-editor .monaco-scrollable-element > .scrollbar > .slider,
+.preview-container::-webkit-scrollbar-thumb {
+  background: var(--border-color) !important;
+  border-radius: 4px !important;
+}
+
+.monaco-editor .monaco-scrollable-element > .scrollbar > .slider:hover,
+.preview-container::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color) !important;
+}
+
+.preview-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.preview-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 预览容器 */
+.preview-container {
+  height: calc(100vh - var(--header-height) - 40px);
+  padding: 40px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* 预览内容样式 */
+.preview-content h1 {
+  text-align: center;
+  margin-bottom: 0.5em;
+  font-size: 24px;
+}
+
+/* 联系信息样式 */
+.preview-content h1 + p {
+  text-align: center !important;
+  margin: 0.5em auto !important;
+  width: 100% !important;
+}
+
+/* 确保打印时联系信息也居中 */
+@media print {
+  .preview-content h1 + p {
+    text-align: center !important;
+    margin: 0.5em auto !important;
+    width: 100% !important;
+  }
+}
+
+/* 基本信息样式 */
+.preview-content h2 {
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: 0.3em;
+  margin: 1.5em 0 1em;
+  font-size: 18px;
+}
+
+/* 列表样式 */
+.preview-content ul {
+  margin: 0.5em 0;
+  padding-left: 1.5em;
+}
+
+.preview-content li {
+  margin: 0.3em 0;
+  line-height: 1.6;
+}
+
+/* 头像样式 */
+.preview-content img {
+  float: right;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin: 0 0 1em 1em;
+  object-fit: cover;
+  border: 2px solid var(--border-color);
+}
+
+/* 加载提示 */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.loading-content {
+  background: var(--bg-color);
+  padding: 24px 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px var(--shadow-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* 保存提示 */
+.save-notification {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--success-color);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+}
+
+.save-notification.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
+  }
+  
+  .header {
+    padding: 0 16px;
+  }
+}
+
+/* 打印样式 */
+@media print {
+  .header,
+  .editor-section {
+    display: none !important;
+  }
+
+  .main-content {
+    padding: 0;
+  }
+
+  .preview-section {
+    box-shadow: none;
+  }
+
+  .preview-container {
+    padding: 0;
+  }
+} 

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Markdown简历编辑器</title>
+  <link rel="stylesheet" href="lapis-cv.css">
+  <link rel="stylesheet" data-name="vs/editor/editor.main" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/editor/editor.main.css">
+</head>
+<body>
+  <div class="editor-container">
+    <div id="editor-container"></div>
+    <div id="preview-container" class="cv-preview"></div>
+  </div>
+
+  <div id="loading" style="display: none;">加载中...</div>
+
+  <!-- 其他依赖 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.2.12/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+  
+  <!-- 主题切换 -->
+  <script src="theme-switcher.js"></script>
+
+  <!-- Monaco Editor -->
+  <script>
+    // Monaco Editor 配置
+    const monacoConfig = {
+      paths: {
+        vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs'
+      }
+    };
+    
+    // 加载 Monaco Editor
+    function loadMonaco() {
+      return new Promise((resolve) => {
+        if (window.monaco) {
+          resolve();
+          return;
+        }
+
+        const loader = document.createElement('script');
+        loader.src = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js';
+        loader.onload = () => {
+          require.config(monacoConfig);
+          require(['vs/editor/editor.main'], resolve);
+        };
+        document.body.appendChild(loader);
+      });
+    }
+
+    // 初始化应用
+    async function initApp() {
+      try {
+        await loadMonaco();
+        // 加载应用主要逻辑
+        const script = document.createElement('script');
+        script.src = 'renderer.js';
+        script.onload = () => {
+          window.initEditor();
+        };
+        document.body.appendChild(script);
+      } catch (error) {
+        console.error('Failed to initialize application:', error);
+        document.getElementById('loading').textContent = '加载失败，请刷新页面重试';
+      }
+    }
+
+    // 启动应用
+    window.onload = initApp;
+  </script>
+</body>
+</html>
