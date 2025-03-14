@@ -235,36 +235,17 @@ class EditorManager {
     async loadTemplateContent() {
         try {
             console.log('开始加载模板文件...');
-            // 强制清除缓存
-            localStorage.removeItem('editorContent');
-            
-            const timestamp = new Date().getTime(); // 添加时间戳防止缓存
-            const response = await fetch(`/template.md?t=${timestamp}`, {
-                cache: 'no-store',
-                headers: {
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache',
-                    'Expires': '0'
-                }
-            });
-            
+            const response = await fetch('/api/template');
             if (!response.ok) {
-                throw new Error(`加载模板失败: ${response.status} ${response.statusText}`);
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-            
-            this.content = await response.text();
-            
-            if (!this.content || this.content.trim() === '') {
-                throw new Error('模板内容为空');
-            }
-            
-            this.templateLoaded = true;
-            console.log('模板加载成功，内容长度:', this.content.length);
-            return this.content;
+            const content = await response.text();
+            console.log('模板文件加载成功，长度:', content.length);
+            this.editor.setValue(content);
+            console.log('模板内容已设置到编辑器');
         } catch (error) {
             console.error('加载模板文件失败:', error);
-            this.templateLoaded = false;
-            throw error;
+            this.editor.setValue('# 简历模板\n\n## 基本信息\n\n- 姓名：\n- 年龄：\n- 学历：\n- 专业：\n- 联系方式：\n\n## 教育经历\n\n## 工作经历\n\n## 项目经验\n\n## 技能特长\n\n## 个人评价');
         }
     }
 

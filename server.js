@@ -27,7 +27,7 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')))
 app.use('/image', express.static(path.join(__dirname, 'web/image')))
 
 // 处理template.md路由
-app.get('/template.md', (req, res) => {
+app.get('/api/template', (req, res) => {
     const templatePath = path.join(__dirname, 'template.md');
     
     // 检查文件是否存在
@@ -59,7 +59,7 @@ app.get('/template.md', (req, res) => {
 })
 
 // 处理默认头像
-app.get('/image/avatar.png', (req, res) => {
+app.get('/api/avatar', (req, res) => {
     const defaultAvatar = path.join(__dirname, 'assets/favicon.ico')
     if (!res.headersSent) {
         res.sendFile(defaultAvatar)
@@ -77,15 +77,21 @@ app.use((err, req, res, next) => {
     res.status(500).send('服务器发生错误，请稍后重试')
 })
 
-app.listen(port, () => {
-    console.log(`网页版应用运行在: http://localhost:${port}`)
-    console.log(`请访问: http://localhost:${port}`)
-    
-    // 检查template.md文件是否存在
-    const templatePath = path.join(__dirname, 'template.md');
-    if (!fs.existsSync(templatePath)) {
-        console.error('警告: template.md 文件不存在');
-    } else {
-        console.log('template.md 文件已找到');
-    }
-}) 
+// 导出app实例供Vercel使用
+module.exports = app;
+
+// 仅在本地开发时启动服务器
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(port, () => {
+        console.log(`网页版应用运行在: http://localhost:${port}`)
+        console.log(`请访问: http://localhost:${port}`)
+        
+        // 检查template.md文件是否存在
+        const templatePath = path.join(__dirname, 'template.md');
+        if (!fs.existsSync(templatePath)) {
+            console.error('警告: template.md 文件不存在');
+        } else {
+            console.log('template.md 文件已找到');
+        }
+    })
+} 

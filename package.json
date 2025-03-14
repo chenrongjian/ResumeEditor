@@ -9,7 +9,8 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "web": "node server.js",
-    "web-dev": "nodemon server.js"
+    "web-dev": "nodemon server.js",
+    "vercel-build": "echo 'Build step completed'"
   },
   "dependencies": {
     "electron": "^28.2.0",
