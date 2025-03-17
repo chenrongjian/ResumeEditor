@@ -2,20 +2,21 @@
 
 一个专业的 Markdown 简历编辑器，基于 Express 和 Monaco Editor 构建。支持实时预览、PDF导出、主题切换等功能。提供 Web 版本，支持离线使用。
 
+> 本项目基于 [LapisCV](https://github.com/BingyanStudio/LapisCV) 进行二次开发，将其从静态Markdown编辑器扩展为在线Web应用，增加了实时预览、主题切换、自动保存等功能。感谢原项目提供的优秀设计和灵感。
+
 ![预览图](docs/preview.png)
 
 ## 🌐 在线使用
 
-访问 [在线简历编辑器](https://resume-editor-phi.vercel.app/) 即可开始使用。
+访问 [在线简历编辑器](https://your-domain.com) 即可开始使用。
 
-### 主要特性
+### PWA 支持
 
-本应用提供以下核心功能：
-- 📝 Markdown 实时编辑与预览
-- 🖨️ 一键导出 PDF 简历
-- 🌓 支持明暗主题切换
-- 💾 自动保存编辑内容
-- 📱 响应式设计，支持各种设备
+本应用支持 PWA（渐进式 Web 应用）特性：
+- 📱 可添加到主屏幕，实现原生应用般的体验
+- 🔄 支持离线访问和自动更新
+- 🚀 快速加载和响应
+- 💾 本地数据存储
 
 ## ✨ 功能特点
 
@@ -41,10 +42,10 @@
 
 ```bash
 # 克隆项目
-git clone https://github.com/chenrongjian/ResumeEditor.git
+git clone https://github.com/your-username/lapis-cv.git
 
 # 进入项目目录
-cd ResumeEditor
+cd lapis-cv
 
 # 安装依赖
 npm install
@@ -53,17 +54,14 @@ npm install
 ### 开发
 
 ```bash
-# 启动Web开发模式
-npm run web-dev
-
-# 启动Electron开发模式
+# 启动开发模式
 npm run dev
 ```
 
 ### 构建
 
 ```bash
-# 构建Electron应用
+# 构建应用
 npm run dist
 ```
 
@@ -79,46 +77,54 @@ npm run dist
    - 在 Markdown 中使用 `<img src="image/avatar.png" alt="avatar">` 引用
 
 3. **导出 PDF**
-   - 点击顶部导航栏的"导出PDF"按钮
-   - 系统会自动生成PDF文件并下载
+   - 点击菜单栏的"文件 -> 导出PDF"
+   - 或使用快捷键 `Ctrl/Cmd + E`
 
 4. **切换主题**
-   - 点击顶部导航栏的主题切换按钮
-   - 支持明亮和暗黑两种主题
+   - 点击菜单栏的"视图 -> 切换主题"
+   - 或使用快捷键（见快捷键列表）
 
 ## ⌨️ 快捷键
 
 - `Ctrl/Cmd + S`: 保存文档
-- `Ctrl/Cmd + Z`: 撤销
-- `Ctrl/Cmd + Y`: 重做
-- `Ctrl/Cmd + F`: 查找
-- `Ctrl/Cmd + H`: 替换
+- `Ctrl/Cmd + E`: 导出 PDF
+- `Ctrl/Cmd + R`: 刷新
+- `Ctrl/Cmd + +`: 放大
+- `Ctrl/Cmd + -`: 缩小
+- `Ctrl/Cmd + 0`: 重置缩放
 
 ## 🔧 技术栈
 
-- 前端框架：Express (Web版) / Electron (桌面版)
+- 前端框架：Electron (桌面版) / 原生 Web (在线版)
 - 编辑器：Monaco Editor
 - Markdown 解析：Marked.js
 - PDF 导出：html2pdf.js
+- PWA 支持：Service Worker
 - 图标：Font Awesome
 - 主题：自定义 CSS 变量
 
 ## 💻 部署说明
 
-### Vercel 部署
+### Web 版本部署
 
-本项目已配置为可直接部署到 Vercel 平台：
+1. 准备环境：
+   ```bash
+   # 安装依赖
+   npm install
+   
+   # 构建 Web 版本
+   npm run build:web
+   ```
 
-1. Fork 本仓库到您的 GitHub 账号
-2. 在 Vercel 中导入该仓库
-3. 使用默认设置完成部署
+2. 部署到服务器：
+   - 将 `dist/web` 目录下的文件部署到您的 Web 服务器
+   - 确保服务器配置了正确的 MIME 类型
+   - 建议启用 HTTPS 以支持 PWA 功能
 
-### 自定义域名
-
-如果您想使用自定义域名：
-1. 在 Vercel 项目设置中添加您的域名
-2. 按照 Vercel 提供的说明配置 DNS 记录
-3. 等待 DNS 生效（通常需要几分钟到几小时）
+3. 配置说明：
+   - 修改 `site.webmanifest` 中的相关信息
+   - 更新 `index.html` 中的 meta 标签
+   - 配置适当的缓存策略
 
 ## 📝 模板说明
 
@@ -134,9 +140,9 @@ npm run dist
 
 ### 数据存储
 
-- 使用 LocalStorage 存储编辑内容
+- Web 版本使用 LocalStorage 存储编辑内容
 - 支持自动保存和恢复
-- 每次刷新页面会重新加载模板（避免缓存问题）
+- 可导出数据备份
 
 ## 🤝 贡献指南
 
